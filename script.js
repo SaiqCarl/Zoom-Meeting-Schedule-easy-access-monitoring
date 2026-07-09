@@ -106,7 +106,8 @@ let zoomAccounts = loadAccounts();
 /* Account fields match the DB columns 1:1, so no row-mapping needed. */
 async function pushAccountsToCloud(arr){
   if(!arr.length) return;
-  const { error } = await sb.from('accounts').upsert(arr);
+  const rows = arr.map(a => ({ ...a, expiry: a.expiry || null }));
+  const { error } = await sb.from('accounts').upsert(rows);
   if(error){ console.error('Supabase accounts upsert failed:', error); showToast('Could not save account to the database — check your connection.','error'); }
 }
 async function deleteAccountFromCloud(id){
